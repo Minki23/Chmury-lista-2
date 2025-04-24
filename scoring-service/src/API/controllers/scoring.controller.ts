@@ -43,10 +43,9 @@ export class ScoringController {
     const filename = resume.filename;
     const email = resume.email;
     const name = resume.name;
-    const phone = resume.phone;
+    const phone = resume.phoneNumber;
     const links = resume.links;
     const technologies = resume.technologies;
-
     await this.commandBus.execute(new ScoreCVCommand(
       applicationId,
       position,

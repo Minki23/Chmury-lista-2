@@ -78,6 +78,7 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
 
   private async extractTechnologies(text: string): Promise<string[]> {
     const possibleTechnologies = (await this.technologiesRepository.get()).technologies;
+    this.logger.log(`Possible technologies: ${possibleTechnologies}`);
     const foundTechnologies: string[] = [];
     for (const technology of Array.isArray(possibleTechnologies) ? possibleTechnologies : []) {
       const escaped = this.escapeRegExp(technology);

@@ -29,6 +29,7 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
     const technologies = resume.technologies;
     const links = resume.links;
     const score = await this.scoreResume(technologies, position, links);
+    this.logger.log(command)
     const application = new ApplicationInfo({
       id,
       position,
@@ -41,7 +42,6 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
       },
     });
     const savedApplication = await this.scoringRepository.create(application);
-
     await this.eventsPublisher.publish(
       'application-scored',
       new ApplicationScoredEvent(
