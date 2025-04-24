@@ -6,6 +6,7 @@ import { ApplicationInfo } from '../Domain/entities/applicationInfo.entity';
 import { IApplicationRepository } from '../Domain/repositories/application-repository.interface';
 import { EventsPublisherService } from '../Infrastructure/messaging/rabbitmq/events-publisher.service';
 import { ApplicationParsedEvent } from '../Domain/Events/application-parsed.event';
+import { ITechnologiesRepository } from '../Domain/repositories/technologies-repository.interface';
 import { IsEmail } from 'class-validator';
 import e from 'express';
 import { link } from 'fs';
@@ -16,10 +17,13 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
   constructor(
     @Inject('IApplicationRepository')
     private readonly applicationRepository: IApplicationRepository,
+    @Inject('ITechnologiesRepository')
+    private readonly technologiesRepository: ITechnologiesRepository,
     private readonly eventsPublisher: EventsPublisherService
   ) {}
 
   async execute(command: ParseCVCommand): Promise<ApplicationInfo> {
+    const position = command.position;
     const resume = command.resume;
     const text = resume.text
     const filename = resume.filename;
@@ -27,7 +31,9 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
     const name = this.extractName(text);
     const phone = this.extractPhone(text);
     const links = this.extractLinks(text);
+    const technologies = await this.extractTechnologies(text);
     const application = new ApplicationInfo({
+      position,
       resume: {
         email: email ?? '',
         name: name ?? '',
@@ -35,6 +41,7 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
         links: links,
         filename,
         text,
+        technologies: technologies
       },
     });
     const savedApplication = await this.applicationRepository.create(application);
@@ -43,6 +50,7 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
       'application-parsed',
       new ApplicationParsedEvent(
       savedApplication.id,
+      position,
       {
         phoneNumber: application.resume.phone,
         email: application.resume.email,
@@ -50,6 +58,7 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
         links: savedApplication.resume.links,
         text: savedApplication.resume.text,
         filename: savedApplication.resume.filename,
+        technologies: savedApplication.resume.technologies,
       }
       )
     );
@@ -60,6 +69,25 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
   private extractEmail(text: string): string | null {
     const match = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}/);
     return match ? match[0] : null;
+  }
+
+  private escapeRegExp(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }  
+
+  private async extractTechnologies(text: string): Promise<string[]> {
+    const possibleTechnologies = (await this.technologiesRepository.get()).technologies;
+    const foundTechnologies: string[] = [];
+    for (const technology of Array.isArray(possibleTechnologies) ? possibleTechnologies : []) {
+      const escaped = this.escapeRegExp(technology);
+      const regex = new RegExp(`(^|[^a-zA-Z0-9#\\+])${escaped}([^a-zA-Z0-9#\\+]|$)`, 'i');
+      if (regex.test(text)) {
+        foundTechnologies.push(technology);
+      }
+    }
+    
+    this.logger.log(`Found technologies: ${foundTechnologies}`);
+    return foundTechnologies;
   }
 
   private extractName(text: string): string | null {

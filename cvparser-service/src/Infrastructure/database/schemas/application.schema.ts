@@ -18,7 +18,8 @@ export const ApplicationSchema = new Schema({
     filename: {
       type: String,
       required: true
-    }
+    },
+    technologies: [String]
   },
   createdAt: {
     type: Date,

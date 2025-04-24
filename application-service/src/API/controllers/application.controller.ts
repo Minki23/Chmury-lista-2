@@ -25,7 +25,9 @@ export class ApplicationController {
   ): Promise<Application> {
     const pdfText = await pdfParse(resumeFile.buffer);
     return this.commandBus.execute(
-      new CreateApplicationCommand({
+      new CreateApplicationCommand(
+        createApplicationDto.position,
+        {
         ...createApplicationDto,
           filename: resumeFile.originalname,
           text: pdfText.text,

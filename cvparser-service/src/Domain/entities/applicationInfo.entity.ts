@@ -8,7 +8,8 @@
       links: string[];
       phone: string;
       text: string;
-      filename: string
+      filename: string,
+      technologies: string[];
     };
     createdAt: Date;
     updatedAt: Date;

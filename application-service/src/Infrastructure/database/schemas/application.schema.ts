@@ -2,6 +2,10 @@ import { Schema } from 'mongoose';
 
 export const ApplicationSchema = new Schema({
   id: String,
+  position: {
+    type: String,
+    required: true
+  },
   resume: {
     text: {
       type: String,

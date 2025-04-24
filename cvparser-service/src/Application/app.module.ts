@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Get, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -7,17 +7,20 @@ import { ApplicationSchema } from '../Infrastructure/database/schemas/applicatio
 import { ApplicationRepository } from '../Infrastructure/database/repositories/application.repository';
 import { EventsPublisherService } from '../Infrastructure/messaging/rabbitmq/events-publisher.service';
 import { ParseCvHandler } from './parseCv.handler';
-import { GetApplicationHandler } from './get-application.handler';
-import { GetApplicationsHandler } from './get-applications.handler';
+import { TechnologiesSchema } from 'src/Infrastructure/database/schemas/technologies.schema';
+import { AddTechnologiesHandler } from './addTechnologies.handler';
+import { DeleteTechnologiesHandler } from './deleteTechnologies.handler';
+import { GetTechnologiesHandler } from './getTechnologies.handler';
+import { TechnologiesRepository } from 'src/Infrastructure/database/repositories/technologies.repository';
 
-const CommandHandlers = [ParseCvHandler];
-const QueryHandlers = [GetApplicationHandler, GetApplicationsHandler];
+const CommandHandlers = [ParseCvHandler, AddTechnologiesHandler, DeleteTechnologiesHandler, AddTechnologiesHandler, GetTechnologiesHandler];
 
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:rOozHrJxPAOjq8wi@recruitment-application.fdlisyk.mongodb.net/?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/?retryWrites=true&w=majority&appName=recruitment-application'),
     MongooseModule.forFeature([{ name: 'ParsedApplications', schema: ApplicationSchema }]),
+    MongooseModule.forFeature([{ name: 'StoredTechnologies', schema: TechnologiesSchema }]),
     ClientsModule.register([
       {
         name: 'ReceiveCvBroker',
@@ -46,7 +49,10 @@ const QueryHandlers = [GetApplicationHandler, GetApplicationsHandler];
   controllers: [ApplicationController],
   providers: [
     ...CommandHandlers,
-    ...QueryHandlers,
+    {
+      provide: 'ITechnologiesRepository',
+      useClass: TechnologiesRepository,
+    },
     {
       provide: 'IApplicationRepository',
       useClass: ApplicationRepository,

@@ -1,6 +1,7 @@
 export class ApplicationParsedEvent {
     constructor(
       public readonly applicationId: string,
+      public readonly position: string,
       public readonly resume: { 
         phoneNumber: string;
         email: string;
@@ -8,6 +9,7 @@ export class ApplicationParsedEvent {
         links: string[];
         text: string;
         filename: string;
+        technologies: string[];
       },
     ) {}
   }

@@ -19,6 +19,7 @@ export class CreateApplicationHandler implements ICommandHandler<CreateApplicati
   async execute(command: CreateApplicationCommand): Promise<Application> {
     const application = new Application({
       id: uuidv4(),
+      position: command.position,
       resume: command.resume,
     });
 
@@ -28,6 +29,7 @@ export class CreateApplicationHandler implements ICommandHandler<CreateApplicati
       'application-submitted',
       new ApplicationSubmittedEvent(
         savedApplication.id, 
+        savedApplication.position,
         savedApplication.resume
       )
     );

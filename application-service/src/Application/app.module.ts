@@ -16,7 +16,7 @@ const QueryHandlers = [GetApplicationHandler, GetApplicationsHandler];
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:rOozHrJxPAOjq8wi@recruitment-application.fdlisyk.mongodb.net/?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/?retryWrites=true&w=majority&appName=recruitment-application'),
     MongooseModule.forFeature([{ name: 'Application', schema: ApplicationSchema }]),
     ClientsModule.register([
       {
