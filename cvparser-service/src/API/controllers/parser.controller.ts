@@ -6,7 +6,7 @@ import { AddTechnologiesCommand } from '../../Application/commands/addTechnologi
 import { AddTechnologiesDto } from '../dtos/add-technologies.dto';
 @Controller()
 
-export class ApplicationController {
+export class ParserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus

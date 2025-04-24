@@ -2,7 +2,7 @@ import { Get, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ApplicationController } from '../API/controllers/application.controller';
+import { ParserController } from '../API/controllers/parser.controller';
 import { ApplicationSchema } from '../Infrastructure/database/schemas/application.schema';
 import { ApplicationRepository } from '../Infrastructure/database/repositories/application.repository';
 import { EventsPublisherService } from '../Infrastructure/messaging/rabbitmq/events-publisher.service';
@@ -18,7 +18,7 @@ const CommandHandlers = [ParseCvHandler, AddTechnologiesHandler, DeleteTechnolog
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/cvparser-service?retryWrites=true&w=majority&appName=recruitment-application'),
     MongooseModule.forFeature([{ name: 'ParsedApplications', schema: ApplicationSchema }]),
     MongooseModule.forFeature([{ name: 'StoredTechnologies', schema: TechnologiesSchema }]),
     ClientsModule.register([
@@ -46,7 +46,7 @@ const CommandHandlers = [ParseCvHandler, AddTechnologiesHandler, DeleteTechnolog
       },
     ]), 
   ],
-  controllers: [ApplicationController],
+  controllers: [ParserController],
   providers: [
     ...CommandHandlers,
     {

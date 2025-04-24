@@ -19,7 +19,6 @@ export class TechnologiesRepository implements ITechnologiesRepository {
   async get(): Promise<TechnologiesInfo> {
     const documents = await this.technologiesModel.find().exec() || [];
     const technologies = new TechnologiesInfo({ technologies: documents.map(doc => doc.technologies).flat() });
-    this.logger.log(`Technologies retrieved: ${JSON.stringify(technologies)}`);
     return technologies;
   }
 

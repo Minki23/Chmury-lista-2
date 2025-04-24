@@ -23,6 +23,7 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
   ) {}
 
   async execute(command: ParseCVCommand): Promise<ApplicationInfo> {
+    const id = command.applicationId;
     const position = command.position;
     const resume = command.resume;
     const text = resume.text
@@ -33,6 +34,7 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
     const links = this.extractLinks(text);
     const technologies = await this.extractTechnologies(text);
     const application = new ApplicationInfo({
+      id: id,
       position,
       resume: {
         email: email ?? '',
@@ -45,7 +47,6 @@ export class ParseCvHandler implements ICommandHandler<ParseCVCommand> {
       },
     });
     const savedApplication = await this.applicationRepository.create(application);
-
     await this.eventsPublisher.publish(
       'application-parsed',
       new ApplicationParsedEvent(
