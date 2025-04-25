@@ -12,7 +12,6 @@ export class NotificationRepository implements INotificationRepository {
   ) {}
 
   async create(application: NotificationInfo): Promise<NotificationInfo> {
-    this.logger.log(`Creating a new interview application: ${JSON.stringify(application)}`);
     const newApplication = new this.interviewModel(application);
     return await newApplication.save();
   }
