@@ -1,9 +1,10 @@
 export class NotifyCommand {
     constructor(
-      public readonly passed: boolean,
       public readonly applicationId: string,
+      public readonly passed: boolean,
       public readonly position: string,
-      public readonly date: Date,
+      public readonly date: Date | null,
+      public readonly employeePhone: string | null,
       public readonly details: {
         phoneNumber: string;
         email: string;

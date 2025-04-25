@@ -18,7 +18,7 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
         private readonly eventsPublisher: EventsPublisherService,
     ) {}
 
-    private async findAvailableEmployee(position: string, startDate: Date): Promise<{ phone: string, scheduledDate: Date } | null> {
+    private async findAvailableEmployee(position: string, startDate: Date): Promise<{ phone: string, scheduledDate: Date }> {
         const CHECK_INTERVAL_MINUTES = 60;
       
         let date = new Date(startDate);
@@ -46,8 +46,8 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
             const interviews = await this.interviewRepository.getByEmployeeId(employee.id);
       
             const hasConflict = interviews.some(interview => {
-              const interviewDate = new Date(interview.date);
-              return Math.abs(interviewDate.getTime() - date.getTime()) < CHECK_INTERVAL_MINUTES * 60 * 1000;
+              const interviewDate = interview.date ? new Date(interview.date) : null;
+              return interviewDate !== null && Math.abs(interviewDate.getTime() - date.getTime()) < CHECK_INTERVAL_MINUTES * 60 * 1000;
             });
       
             if (!hasConflict) {
@@ -63,22 +63,38 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
 
     async execute(command: ScheduleInterviewCommand): Promise<void> {
         const applicationId = command.applicationId
+        const passed = command.passed
         const position = command.position
+        const details = command.details;
+        if (!passed) {
+          await this.eventsPublisher.publish(
+            'interview-scheduled',
+            new InterviewScheduledEvent(applicationId, passed, position, null, null, details)
+          );
+          await this.interviewRepository.create({
+              applicationId,
+              passed,
+              position,
+              employeePhone: null,
+              date: null,
+              details
+          });
+
+        }
         const firstDate = new Date();
         firstDate.setDate(firstDate.getDate() + ((1 + 7 - firstDate.getDay()) % 7));
         firstDate.setHours(11, 0, 0, 0); 
+        
         const result = await this.findAvailableEmployee(command.position, firstDate);
-        if (!result) {
-            throw new Error('No available employee found for the given position and date.');
-        }
+
         const { phone: employeePhone, scheduledDate: date }: { phone: string; scheduledDate: Date } = result;
-        const details = command.details;
         await this.eventsPublisher.publish(
             'interview-scheduled',
-            new InterviewScheduledEvent(applicationId, employeePhone, position, date, details)
+            new InterviewScheduledEvent(applicationId, passed, position, employeePhone, date, details)
         );
         await this.interviewRepository.create({
             applicationId,
+            passed,
             position,
             employeePhone,
             date,

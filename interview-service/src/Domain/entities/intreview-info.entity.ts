@@ -1,9 +1,10 @@
 
 export class InterviewInfo {
     applicationId: string;
+    passed: boolean;
     position: string;
-    employeePhone: string;
-    date: Date;
+    employeePhone: string | null;
+    date: Date | null;
     details: {
         filename: string;
         text: string;

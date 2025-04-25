@@ -12,7 +12,9 @@ export class NotificationController {
 
   @EventPattern('interview-scheduled')
   async handleInterviewScheduled(@Payload() data: any) {
+    this.logger.log('Received interview-scheduled event:', data);
     const applicationId = data.applicationId;
+    const passed = data.passed;
     const position = data.position;
     const details = data.details;
     const phoneNumber = details.phoneNumber;
@@ -21,10 +23,11 @@ export class NotificationController {
     const links = details.links;
     const score = details.score;
     await this.commandBus.execute(new NotifyCommand(
-      true,
       applicationId,
+      passed,
       position,
       data.dateTime,
+      data.employeePhone,
       {
         phoneNumber,
         email,

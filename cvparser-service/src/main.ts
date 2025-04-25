@@ -21,6 +21,6 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
   await app.listen(3002); 
-  console.log('CvParser is running on port 3003 and listening to RabbitMQ');
+  console.log('CvParser is running on port 3002 and listening to RabbitMQ');
 }
 bootstrap();

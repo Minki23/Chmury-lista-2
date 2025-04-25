@@ -1,6 +1,7 @@
   
   export class ApplicationInfo {
     id: string;
+    passed: boolean;
     position: string;
     resume: { 
       phoneNumber: string;

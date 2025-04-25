@@ -2,7 +2,8 @@ export class NotificationInfo {
     passed: boolean;
     applicationId: string;
     position: string;
-    date: Date;
+    date: Date | null;
+    employeePhone: string | null;
     details: {
       phoneNumber: string;
       email: string;

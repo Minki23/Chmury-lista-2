@@ -38,8 +38,8 @@ export class InterviewController {
 
   @EventPattern('application-scored')
   async handleApplicationScored(@Payload() data: any) {
-    this.logger.log(data)
     const applicationId = data.applicationId;
+    const passed = data.passed;
     const position = data.position;
     const resume = data.resume;
     const phone = resume.phoneNumber;
@@ -52,6 +52,7 @@ export class InterviewController {
     const links = resume.links;
     await this.commandBus.execute(new ScheduleInterviewCommand(
       applicationId,
+      passed,
       position,
       {
         filename: filename,

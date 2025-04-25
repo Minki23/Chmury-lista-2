@@ -29,9 +29,11 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
     const technologies = resume.technologies;
     const links = resume.links;
     const score = await this.scoreResume(technologies, position, links);
+    const passed = score >= 60;
     this.logger.log(command)
     const application = new ApplicationInfo({
       id,
+      passed,
       position,
       resume: {
         name: resume.name ?? '',
@@ -46,6 +48,7 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
       'application-scored',
       new ApplicationScoredEvent(
       id,
+      passed,
       position,
       {
         phoneNumber: phone,
