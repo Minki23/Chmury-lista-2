@@ -1,10 +1,10 @@
 import { Schema } from 'mongoose';
 
-export const InterviewSchema = new Schema({
+export const NotificationSchema = new Schema({
+  passed: {type: Boolean, required: true},
   applicationId: { type: String, required: true },
   position: { type: String, required: true },
   date: { type: Date, required: true },
-  employeePhone: {type: String, required: true},
   details: {
     phoneNumber: { type: String, required: true },
     email: { type: String, required: true },

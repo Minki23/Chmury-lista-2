@@ -2,6 +2,7 @@ export class InterviewScheduledEvent {
   constructor(
     public readonly applicationId: string,
     public readonly position: string,
+    public readonly employeePhone: string,
     public readonly dateTime: Date,
     public readonly details: {
         filename: string;

@@ -18,7 +18,7 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
         private readonly eventsPublisher: EventsPublisherService,
     ) {}
 
-    private async findAvailableEmployee(position: string, startDate: Date): Promise<{ id: string, scheduledDate: Date } | null> {
+    private async findAvailableEmployee(position: string, startDate: Date): Promise<{ phone: string, scheduledDate: Date } | null> {
         const CHECK_INTERVAL_MINUTES = 60;
       
         let date = new Date(startDate);
@@ -51,7 +51,7 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
             });
       
             if (!hasConflict) {
-              return { id: employee.id, scheduledDate: new Date(date) };
+              return { phone: employee.phone, scheduledDate: new Date(date) };
             }
           }
       
@@ -71,19 +71,18 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
         if (!result) {
             throw new Error('No available employee found for the given position and date.');
         }
-        const { id: employeeId, scheduledDate: date }: { id: string; scheduledDate: Date } = result;
+        const { phone: employeePhone, scheduledDate: date }: { phone: string; scheduledDate: Date } = result;
         const details = command.details;
-        
         await this.eventsPublisher.publish(
             'interview-scheduled',
-            new InterviewScheduledEvent(applicationId, position, date, details)
+            new InterviewScheduledEvent(applicationId, employeePhone, position, date, details)
         );
         await this.interviewRepository.create({
             applicationId,
             position,
-            employeeId,
+            employeePhone,
             date,
-            details,
+            details
         });
         this.logger.log(`Interview scheduled successfully for applicationId: ${applicationId}`);
     }

@@ -2,7 +2,7 @@
 export class InterviewInfo {
     applicationId: string;
     position: string;
-    employeeId: string;
+    employeePhone: string;
     date: Date;
     details: {
         filename: string;
