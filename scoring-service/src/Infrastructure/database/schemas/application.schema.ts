@@ -18,5 +18,8 @@ export const ApplicationSchema = new Schema({
   updatedAt: {
     type: Date,
     default: Date.now
+  },
+  requiredTchnologies:{
+    type: [String]
   }
 });

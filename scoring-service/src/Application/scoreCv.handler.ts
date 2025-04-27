@@ -28,7 +28,7 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
     const email = resume.email;
     const technologies = resume.technologies;
     const links = resume.links;
-    const score = await this.scoreResume(technologies, position, links);
+    const { score, keyTec } = await this.scoreResume(technologies, position, links);
     const passed = score >= 60;
     this.logger.log(command)
     const application = new ApplicationInfo({
@@ -42,6 +42,7 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
         links: links,
         score: score
       },
+      requiredTechnologies: keyTec,
     });
     const savedApplication = await this.scoringRepository.create(application);
     await this.eventsPublisher.publish(
@@ -56,7 +57,8 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
         name: savedApplication.resume.name,
         links: savedApplication.resume.links,
         score: score,
-      }
+      },
+      keyTec
       )
     );
 
@@ -73,11 +75,11 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
     return keyTechScore + usefulTechScore + 12;
   }
 
-  private async scoreResume(technologies: string[], position: string, links: string[]): Promise<number> {
+  private async scoreResume(technologies: string[], position: string, links: string[]): Promise<{ score: number; keyTec: string[] }> {
     let score = 0;
     const positionDetails = await this.positionsRepository.findByPosition(position);
     const maxScore = positionDetails ? this.calcMaxScore(positionDetails) : 100;
-
+    let keyTec: string[] = [];
     if (positionDetails) {
       const keyTechnologies = positionDetails.keyTechnologies.map(tech => tech.toLowerCase());
       const usefulTechnologies = positionDetails.usefulTechnologies.map(tech => tech.toLowerCase());
@@ -87,6 +89,8 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
 
       const usefulTechMatches = technologies.filter(tech => usefulTechnologies.includes(tech.toLowerCase()));
       score += usefulTechMatches.length * 5;
+
+      keyTec = keyTechnologies
     }
   
     if (links.some(link => link.includes('github.com'))) {
@@ -99,7 +103,7 @@ export class ScoreCvHandler implements ICommandHandler<ScoreCVCommand> {
       score += 2;
     }
   
-    return parseFloat((score / maxScore * 100).toFixed(2));
+    return { score: parseFloat((score / maxScore * 100).toFixed(2)), keyTec };
   }
   
 }

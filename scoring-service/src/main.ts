@@ -8,6 +8,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
+  app.enableCors({
+    origin: 'http://localhost:3000'
+  });
+
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {

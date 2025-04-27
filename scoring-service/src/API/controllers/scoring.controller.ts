@@ -3,6 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EventPattern, Payload, Ctx, RmqContext, ClientProxy } from '@nestjs/microservices';
 import { ScoreCVCommand } from '../../Application/commands/scoreCV.command';
 import { AddPositionCommand } from 'src/Application/commands/add-position.command';
+import { GetPositionsQuery } from 'src/Application/queries/get-positions.query';
 @Controller()
 
 export class ScoringController {
@@ -12,7 +13,7 @@ export class ScoringController {
   ) {}
   private readonly logger = new Logger("CVScoreService");
 
-  @Post('position')
+  @Post('positions')
   async addPosition(@Body() body: any) {
     this.logger.log('Received position:', body.position);
     const name = body.position.name;
@@ -29,8 +30,13 @@ export class ScoringController {
       position.keyTechnologies,
       position.usefulTechnologies
     ));
-    this.logger.log('Position added:', position);
-    
+    this.logger.log('Position added:', position); 
+  }
+  @Get('positions')
+  async getPositions() {
+    this.logger.log('Received get positions request');
+    const positions = await this.queryBus.execute(new GetPositionsQuery());
+    return positions;
   }
 
   @EventPattern('application-parsed')

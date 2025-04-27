@@ -10,6 +10,7 @@
       score: number;
       links: string[];
     };
+    requiredTechnologies: string[];
     createdAt: Date;
     updatedAt: Date;
     

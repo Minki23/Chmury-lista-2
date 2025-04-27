@@ -11,6 +11,7 @@ export class ScheduleInterviewCommand {
             name: string;
             links: string[];
             score: number;
-        }
+        },
+        public readonly requiredTechnologies: string[],
     ) {}
 }

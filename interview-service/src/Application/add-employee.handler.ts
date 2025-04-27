@@ -14,14 +14,15 @@ export class AddEmployeeHandler implements ICommandHandler<AddEmployeeCommand> {
     ) {}
 
     async execute(command: AddEmployeeCommand): Promise<EmployeeInfo> {
-        const {name, position, phone, email } = command;
-
+        const {name, position, phone, email, proficientTechnologies } = command;
+        const lowerCaseTechnologies = proficientTechnologies.map(tech => tech.toLowerCase());
         const employee = new EmployeeInfo(
             {
                 name,
                 position,
                 phone,
-                email
+                email,
+                proficientTechnologies: lowerCaseTechnologies
             }
         )
         const employeeCreated = this.employeeRepository.add(employee)

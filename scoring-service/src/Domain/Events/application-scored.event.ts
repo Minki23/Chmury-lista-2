@@ -10,5 +10,6 @@ export class ApplicationScoredEvent {
         score: number;
         links: string[];
       },
+      public readonly requiredTechnologies: string[],
     ) {}
   }

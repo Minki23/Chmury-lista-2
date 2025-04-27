@@ -9,10 +9,11 @@ import { EventsPublisherService } from '../Infrastructure/messaging/rabbitmq/eve
 import { ScoreCvHandler } from './scoreCv.handler';
 import { PositionsSchema } from 'src/Infrastructure/database/schemas/positions.schema';
 import { PositionsRepository } from 'src/Infrastructure/database/repositories/positions.repository';
-import { AddPositionHandler } from './add-position.handler';
+import { AddPositionHandler } from './handlers/add-position.handler';
+import { GetPositionsHandler } from './handlers/get-positions.handler';
 
 const CommandHandlers = [ScoreCvHandler, AddPositionHandler];
-
+const QueryHandlers = [GetPositionsHandler];
 @Module({
   imports: [
     CqrsModule,
@@ -47,6 +48,7 @@ const CommandHandlers = [ScoreCvHandler, AddPositionHandler];
   controllers: [ScoringController],
   providers: [
     ...CommandHandlers,
+    ...QueryHandlers,
     {
       provide: 'IScoringRepository',
       useClass: ScoringRepository,

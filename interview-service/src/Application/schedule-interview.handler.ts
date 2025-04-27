@@ -18,7 +18,7 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
         private readonly eventsPublisher: EventsPublisherService,
     ) {}
 
-    private async findAvailableEmployee(position: string, startDate: Date): Promise<{ phone: string, scheduledDate: Date }> {
+    private async findAvailableEmployee(startDate: Date, requiredTechnologies: string[]): Promise<{ phone: string, scheduledDate: Date }> {
         const CHECK_INTERVAL_MINUTES = 60;
       
         let date = new Date(startDate);
@@ -39,8 +39,8 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
             date.setHours(9, 0, 0, 0);
             continue;
           }
-      
-          const employees = await this.employeeRepository.getWithPosition(position);
+          this.logger.log(`requiredTechnologies: ${requiredTechnologies}`)
+          const employees = await this.employeeRepository.getWithTechnologies(requiredTechnologies);
       
           for (const employee of employees) {
             const interviews = await this.interviewRepository.getByEmployeeId(employee.id);
@@ -66,6 +66,7 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
         const passed = command.passed
         const position = command.position
         const details = command.details;
+        const requiredTchnologies = command.requiredTechnologies;
         if (!passed) {
           await this.eventsPublisher.publish(
             'interview-scheduled',
@@ -85,7 +86,7 @@ export class ScheduleInterviewHandler implements ICommandHandler<ScheduleIntervi
         firstDate.setDate(firstDate.getDate() + ((1 + 7 - firstDate.getDay()) % 7));
         firstDate.setHours(11, 0, 0, 0); 
         
-        const result = await this.findAvailableEmployee(command.position, firstDate);
+        const result = await this.findAvailableEmployee(firstDate, requiredTchnologies);
 
         const { phone: employeePhone, scheduledDate: date }: { phone: string; scheduledDate: Date } = result;
         await this.eventsPublisher.publish(

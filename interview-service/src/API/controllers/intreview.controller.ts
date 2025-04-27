@@ -18,19 +18,22 @@ export class InterviewController {
     const position = body.employee.position;
     const phone = body.employee.phone;
     const email = body.employee.email;
+    const proficientTechnologies = body.employee.proficientTechnologies;
 
     const employee = {
       name: name,
       position: position,
       phone: phone,
-      email: email
+      email: email,
+      proficientTechnologies: proficientTechnologies
     };
 
     await this.commandBus.execute(new AddEmployeeCommand(
       name,
       position,
       phone,
-      email
+      email,
+      proficientTechnologies
     ));
     this.logger.log('Employee added:', employee);
     
@@ -45,6 +48,8 @@ export class InterviewController {
     const phone = resume.phoneNumber;
     const email = resume.email;
     const score = resume.score;
+    const requiredTechnologies = data.requiredTechnologies;
+
 
     const filename = resume.filename;
     const text = resume.text;
@@ -62,7 +67,8 @@ export class InterviewController {
         name: name,
         links: links,
         score: score
-      }
+      },
+      requiredTechnologies
     ));
   }
 }

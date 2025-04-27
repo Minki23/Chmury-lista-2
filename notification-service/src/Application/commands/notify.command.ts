@@ -11,7 +11,7 @@ export class NotifyCommand {
         name: string;
         links: string[];
         score: number;
-      },
+      }
     ) {}
   }
   

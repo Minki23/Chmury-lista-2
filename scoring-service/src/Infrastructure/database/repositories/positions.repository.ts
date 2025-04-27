@@ -35,4 +35,10 @@ export class PositionsRepository implements IPositionsRepository {
     }
     return true;
   }
+
+  async getAll(): Promise<PositionInfo[]> {
+    const positions = await this.positionsModel.find().exec();
+    return positions;
+  }
+
 }

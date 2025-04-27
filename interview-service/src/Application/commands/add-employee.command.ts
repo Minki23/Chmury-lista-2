@@ -4,5 +4,6 @@ export class AddEmployeeCommand {
         public readonly position: string,
         public readonly phone: string,
         public readonly email: string,
+        public readonly proficientTechnologies: string[],
     ) {}
 }

@@ -4,7 +4,6 @@ import { NotifyCommand } from './commands/notify.command';
 import { INotificationRepository } from 'src/Domain/repositories/notification-repository.interface';
 import { MailerSend, EmailParams, Recipient, Sender } from 'mailersend';
 
-//mlsn.e2556b79c406886ef6e0ffe2a72e686b52c90a58a79ac847fbab4341ec298334
 @CommandHandler(NotifyCommand)
 export class NotifyHandler implements ICommandHandler<NotifyCommand> {
     private readonly logger = new Logger('NotifyHandler');
@@ -23,7 +22,7 @@ export class NotifyHandler implements ICommandHandler<NotifyCommand> {
         const mailersend = new MailerSend({
           apiKey: 'mlsn.e2556b79c406886ef6e0ffe2a72e686b52c90a58a79ac847fbab4341ec298334',
         });
-        const sentFrom = new Sender('MS_03VyVh@test-xkjn41mm6o54z781.mlsender.net', 'Zespół Rekrutacji TechCorp');
+        const sentFrom = new Sender('MS_03VyVh@test-xkjn41mm6o54z781.mlsender.net', 'Zespół Rekrutacji Cybernovate');
         const recipients = [new Recipient(details.email, details.name)];
   
         const emailParams = new EmailParams()
@@ -43,7 +42,7 @@ export class NotifyHandler implements ICommandHandler<NotifyCommand> {
               Twój dotychczasowy wynik: <strong>${details.score}%</strong>
             </p>
             <p>W razie pytań skontaktuj się z nami pod adresem: <a href="mailto:rekrutacja@email.com">rekrutacja@email.com</a></p>
-            <p>Pozdrawiamy,<br>Zespół Rekrutacyjny TechCorp</p>
+            <p>Pozdrawiamy,<br>Zespół Rekrutacyjny Cybernovate</p>
           `)
           .setText(`Witaj ${details.name}, zostałeś zaproszony do kolejnego etapu rekrutacji na stanowisko ${position}. Rozmowa odbędzie się ${date ? new Date(date).toString(): "w swoim czasie"}. Twój wynik: ${details.score}%.`);
   
@@ -54,7 +53,7 @@ export class NotifyHandler implements ICommandHandler<NotifyCommand> {
           apiKey: 'mlsn.e2556b79c406886ef6e0ffe2a72e686b52c90a58a79ac847fbab4341ec298334',
         });
         
-        const sentFrom = new Sender('MS_03VyVh@test-xkjn41mm6o54z781.mlsender.net', 'Zespół Rekrutacji TechCorp');
+        const sentFrom = new Sender('MS_03VyVh@test-xkjn41mm6o54z781.mlsender.net', 'Zespół Rekrutacji Cybernovate');
         const recipients = [new Recipient(details.email, details.name)];
         
         const emailParams = new EmailParams()
@@ -77,7 +76,7 @@ export class NotifyHandler implements ICommandHandler<NotifyCommand> {
               Zachęcamy do aplikowania w przyszłości – z przyjemnością rozpatrzymy Twoją kandydaturę ponownie.
             </p>
             <p>W razie pytań jesteśmy dostępni pod adresem: <a href="mailto:rekrutacja@email.com">rekrutacja@email.com</a></p>
-            <p>Pozdrawiamy,<br>Zespół Rekrutacyjny TechCorp</p>
+            <p>Pozdrawiamy,<br>Zespół Rekrutacyjny Cybernovate</p>
           `)
           .setText(`Witaj ${details.name}, dziękujemy za udział w rekrutacji na stanowisko ${position}. Niestety, nie możemy kontynuować procesu. Twój wynik: ${details.score}%.`);
         

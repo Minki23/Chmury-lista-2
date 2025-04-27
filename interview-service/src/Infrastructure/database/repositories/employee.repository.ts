@@ -50,8 +50,24 @@ export class EmployeeRepository implements IEmployeeRepository {
     return true;
   }
 
-  async getWithPosition(position: string): Promise<EmployeeInfo[]> {
-    const employees = await this.employeesModel.find({ position }).exec();
-    return employees
+  async getWithTechnologies(technologies: string[]): Promise<EmployeeInfo[]> {
+    try {
+      const lowerCaseTechnologies = technologies.map(tech => tech.toLowerCase());
+      const employees = await this.employeesModel
+        .find({ proficientTechnologies: { $elemMatch: { $in: lowerCaseTechnologies } } })
+        .exec();
+
+      if (employees.length === 0) {
+        this.logger.warn(`No employees found with matching technologies. Returning random employees.`);
+        const randomEmployees = await this.employeesModel.aggregate([{ $sample: { size: 5 } }]).exec();
+        return randomEmployees;
+      }
+
+      this.logger.log(`Employees retrieved with matching technologies: ${JSON.stringify(employees)}`);
+      return employees;
+    } catch (error) {
+      this.logger.error(`Error retrieving employees with technologies ${technologies}: ${error.message}`);
+      throw error;
+    }
   }
 }
