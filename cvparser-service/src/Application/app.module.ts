@@ -18,7 +18,7 @@ const CommandHandlers = [ParseCvHandler, AddTechnologiesHandler, DeleteTechnolog
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/cvparser-service?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot(process.env.MONGO_DB ?? ''),
     MongooseModule.forFeature([{ name: 'ParsedApplications', schema: ApplicationSchema }]),
     MongooseModule.forFeature([{ name: 'StoredTechnologies', schema: TechnologiesSchema }]),
     ClientsModule.register([
@@ -26,7 +26,7 @@ const CommandHandlers = [ParseCvHandler, AddTechnologiesHandler, DeleteTechnolog
         name: 'ReceiveCvBroker',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'parse_application',
           queueOptions: {
             durable: true
@@ -37,7 +37,7 @@ const CommandHandlers = [ParseCvHandler, AddTechnologiesHandler, DeleteTechnolog
         name: 'ScoreCvBroker',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'score_application',
           queueOptions: {
             durable: true

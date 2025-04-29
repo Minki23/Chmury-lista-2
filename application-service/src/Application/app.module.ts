@@ -16,14 +16,14 @@ const QueryHandlers = [GetApplicationHandler, GetApplicationsHandler];
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/application-service?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot(process.env.MONGO_DB ?? ''),
     MongooseModule.forFeature([{ name: 'Application', schema: ApplicationSchema }]),
     ClientsModule.register([
       {
         name: 'CVReceiveClient',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'parse_application',
           queueOptions: {
             durable: true

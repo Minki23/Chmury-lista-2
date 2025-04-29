@@ -17,7 +17,7 @@ const QueryHandlers = [GetPositionsHandler];
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/scoring-service?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot(process.env.MONGO_DB ?? ''),
     MongooseModule.forFeature([{ name: 'StoredPositions', schema: PositionsSchema }]),
     MongooseModule.forFeature([{ name: 'ScoredApplications', schema: ApplicationSchema }]),
     ClientsModule.register([
@@ -25,7 +25,7 @@ const QueryHandlers = [GetPositionsHandler];
         name: 'ReceiveCvBroker',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'score_application',
           queueOptions: {
             durable: true
@@ -36,7 +36,7 @@ const QueryHandlers = [GetPositionsHandler];
         name: 'InterviewCvBroker',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'interview_application',
           queueOptions: {
             durable: true

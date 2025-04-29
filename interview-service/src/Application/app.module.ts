@@ -17,7 +17,7 @@ const CommandHandlers = [AddEmployeeHandler, ScheduleInterviewHandler];
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forRoot('mongodb+srv://michal:DcVz77j8KTDTYpSX@recruitment-application.bbb6uka.mongodb.net/interview-service?retryWrites=true&w=majority&appName=recruitment-application'),
+    MongooseModule.forRoot(process.env.MONGO_DB ?? ''),
     MongooseModule.forFeature([{ name: 'Employee', schema: EmployeeSchema }]),
     MongooseModule.forFeature([{ name: 'Interview', schema: InterviewSchema }]),
     ClientsModule.register([
@@ -25,7 +25,7 @@ const CommandHandlers = [AddEmployeeHandler, ScheduleInterviewHandler];
         name: 'InterviewCvBroker',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'interview_application',
           queueOptions: {
             durable: true
@@ -36,7 +36,7 @@ const CommandHandlers = [AddEmployeeHandler, ScheduleInterviewHandler];
         name: 'NotificationCvBroker',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://hnaafuut:f7fxwO4mI6uwZIFWxdQWhelNZ6htKy_8@cow.rmq2.cloudamqp.com/hnaafuut'],
+          urls: [process.env.BROKER ?? ''],
           queue: 'notify_application',
           queueOptions: {
             durable: true
